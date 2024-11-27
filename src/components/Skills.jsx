@@ -44,6 +44,10 @@ export const Skills = () => {
     return count * 10;
   };
 
+  const sortedLanguageList = () => (
+    state.languageList.sort((firstLang, nextLang) =>  nextLang.count - firstLang.count)
+  )
+
   return (
     <div id="skills">
       <div className="container">
@@ -58,7 +62,7 @@ export const Skills = () => {
           }
           {
             state.requestState === requestStates.success && (
-              state.languageList.map((item, index) => (
+              sortedLanguageList().map((item, index) => (
                 <div className="skill-item" key={index}>
                   <p className="description"><strong>{item.language}</strong></p>
                   <div style={{ width: 100, height: 100 }}>
