@@ -1,3 +1,5 @@
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 import { useEffect, useReducer } from 'react';
 import axios from 'axios';
 import { skillReducer, initialState, actionTypes } from '../reducers/skillReducer';
@@ -12,7 +14,7 @@ export const Skills = () => {
   // responseを引数として受け取れるのは、axiosとPromiseの仕組み。コールバック関数が引数を受け取れるようなものではない。
   useEffect(() => {
     dispatch({ type: actionTypes.fetch });
-    axios.get('https://api.github.com/users/USER_NAME/repos')
+    axios.get('https://api.github.com/users/tsubasahirakida/repos')
       .then((response) => {
         const languageList = response.data.map(res => res.language);
         const countedLanguageList = generateLanguageCountObj(languageList);
@@ -37,6 +39,11 @@ export const Skills = () => {
     }));
   };
 
+  const convertCountToPercentage = (count) => {
+    if (count > 10) { return 100; }
+    return count * 10;
+  };
+
   return (
     <div id="skills">
       <div className="container">
@@ -47,6 +54,18 @@ export const Skills = () => {
           {
             state.requestState === requestStates.loading && (
               <p className="description">取得中...</p>
+            )
+          }
+          {
+            state.requestState === requestStates.success && (
+              state.languageList.map((item, index) => (
+                <div className="skill-item" key={index}>
+                  <p className="description"><strong>{item.language}</strong></p>
+                  <div style={{ width: 100, height: 100 }}>
+                    <CircularProgressbar value={convertCountToPercentage(item.count)} text={`${convertCountToPercentage(item.count)}%`}/>
+                  </div>
+                </div>
+              ))
             )
           }
           {
