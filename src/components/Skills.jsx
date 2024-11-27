@@ -1,6 +1,7 @@
 import { useEffect, useReducer } from 'react';
 import axios from 'axios';
 import { skillReducer, initialState, actionTypes } from '../reducers/skillReducer';
+import { requestStates } from '../constants';
 
 export const Skills = () => {
   const [state, dispatch] = useReducer(skillReducer, initialState);
@@ -43,6 +44,16 @@ export const Skills = () => {
           <h2>Skills</h2>
         </div>
         <div className="skills-container">
+          {
+            state.requestState === requestStates.loading && (
+              <p className="description">取得中...</p>
+            )
+          }
+          {
+            state.requestState === requestStates.error && (
+              <p className="description">エラーが発生しました</p>
+            )
+          }
         </div>
       </div>
     </div>
