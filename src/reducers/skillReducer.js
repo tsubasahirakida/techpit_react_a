@@ -1,5 +1,6 @@
 import { requestStates } from '../constants';
- 
+
+// アクション用の定数
 export const actionTypes = {
   initial: 'INITIAL',
   fetch: 'FETCHING',
@@ -18,11 +19,12 @@ export const skillReducer = (state, action) => {
     case actionTypes.initial: {
       return {
         languageList: [],
-        requestState: requestStates.initial
+        requestState: requestStates.idle
       }
     }
     case actionTypes.fetch: {
       return {
+        // スプレッド構文。現在の状態と同じstateをコピーする。
         ...state,
         requestState: requestStates.loading
       }

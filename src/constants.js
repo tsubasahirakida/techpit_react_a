@@ -1,3 +1,4 @@
+// requestのステートの定義
 export const requestStates = {
   idle: 'IDLE',
   loading: 'LOADING',
