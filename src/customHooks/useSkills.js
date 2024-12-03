@@ -7,34 +7,43 @@ import { skillReducer, initialState, actionTypes } from '../reducers/skillReduce
 export const useSkills = () => {
   const [state, dispatch] = useReducer(skillReducer, initialState);
 
-  useEffect(() => {
+  const fetchReposApi = () => {
     dispatch({ type: actionTypes.fetch });
     axios.get('https://api.github.com/users/tsubasahirakida/repos')
       .then((response) => {
         const languageList = response.data.map(res => res.language)
         const countedLanguageList = generateLanguageCountObj(languageList)
-        dispatch({ type: actionTypes.success, payload: { languageList: countedLanguageList } });
+        dispatch({ type: actionTypes.success, payload: {languageList: countedLanguageList } });
       })
       .catch(() => {
         dispatch({ type: actionTypes.error });
       });
+  }
+
+  useEffect(() => {
+    fetchReposApi();
    }, []);
 
-  const generateLanguageCountObj = (allLanguageList) => {
+  function generateLanguageCountObj(allLanguageList) {
     const notNullLanguageList = allLanguageList.filter(language => language != null);
-    const uniqueLanguageList = [...new Set(notNullLanguageList)]
+    const uniqueLanguageList = [...new Set(notNullLanguageList)];
 
     return uniqueLanguageList.map(item => {
       return {
         language: item,
         count: allLanguageList.filter(language => language === item).length
-      }
+      };
     });
-  };
+  }
 
-  const converseCountToPercentage = (count) => {
-    if (count > 10) { return 100; }
-    return count * 10;
+  // マジックナンバーの使用を防ぐ
+  const DEFAULT_MAX_PERCENTAGE = 100;
+  const LANGUAGE_COUNT_BASE = 10;
+
+  // 変数名をより詳細に命名する
+  const converseCountToPercentage = (languageCount) => {
+    if (languageCount > LANGUAGE_COUNT_BASE) { return DEFAULT_MAX_PERCENTAGE; }
+    return languageCount * LANGUAGE_COUNT_BASE;
   };
 
   const sortedLanguageList = () => (
